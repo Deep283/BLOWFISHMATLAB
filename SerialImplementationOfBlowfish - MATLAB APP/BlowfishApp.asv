@@ -1,0 +1,166 @@
+function varargout = BlowfishApp(varargin)
+%BLOWFISHAPP M-file for BlowfishApp.fig
+%      BLOWFISHAPP, by itself, creates a new BLOWFISHAPP or raises the existing
+%      singleton*.
+%
+%      H = BLOWFISHAPP returns the handle to a new BLOWFISHAPP or the handle to
+%      the existing singleton*.
+%
+%      BLOWFISHAPP('Property','Value',...) creates a new BLOWFISHAPP using the
+%      given property value pairs. Unrecognized properties are passed via
+%      varargin to BlowfishApp_OpeningFcn.  This calling syntax produces a
+%      warning when there is an existing singleton*.
+%
+%      BLOWFISHAPP('CALLBACK') and BLOWFISHAPP('CALLBACK',hObject,...) call the
+%      local function named CALLBACK in BLOWFISHAPP.M with the given input
+%      arguments.
+%
+%      *See GUI Options on GUIDE's Tools menu.  Choose "GUI allows only one
+%      instance to run (singleton)".
+%
+% See also: GUIDE, GUIDATA, GUIHANDLES
+
+% Edit the above text to modify the response to help BlowfishApp
+
+% Last Modified by GUIDE v2.5 13-Apr-2018 23:50:33
+
+% Begin initialization code - DO NOT EDIT
+gui_Singleton = 1;
+gui_State = struct('gui_Name',       mfilename, ...
+                   'gui_Singleton',  gui_Singleton, ...
+                   'gui_OpeningFcn', @BlowfishApp_OpeningFcn, ...
+                   'gui_OutputFcn',  @BlowfishApp_OutputFcn, ...
+                   'gui_LayoutFcn',  [], ...
+                   'gui_Callback',   []);
+if nargin && ischar(varargin{1})
+   gui_State.gui_Callback = str2func(varargin{1});
+end
+
+if nargout
+    [varargout{1:nargout}] = gui_mainfcn(gui_State, varargin{:});
+else
+    gui_mainfcn(gui_State, varargin{:});
+end
+% End initialization code - DO NOT EDIT
+
+
+% --- Executes just before BlowfishApp is made visible.
+function BlowfishApp_OpeningFcn(hObject, eventdata, handles, varargin)
+% This function has no output args, see OutputFcn.
+% hObject    handle to figure
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+% varargin   unrecognized PropertyName/PropertyValue pairs from the
+%            command line (see VARARGIN)
+
+% Choose default command line output for BlowfishApp
+handles.output = hObject;
+
+% Update handles structure
+guidata(hObject, handles);
+
+% UIWAIT makes BlowfishApp wait for user response (see UIRESUME)
+% uiwait(handles.figure1);
+
+
+% --- Outputs from this function are returned to the command line.
+function varargout = BlowfishApp_OutputFcn(hObject, eventdata, handles)
+% varargout  cell array for returning output args (see VARARGOUT);
+% hObject    handle to figure
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Get default command line output from handles structure
+varargout{1} = handles.output;
+
+
+
+function InputText_Callback(hObject, eventdata, handles)
+
+
+
+% --- Executes during object creation, after setting all properties.
+function InputText_CreateFcn(hObject, eventdata, handles)
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes during object deletion, before destroying properties.
+function InputText_DeleteFcn(hObject, eventdata, handles)
+
+
+
+function Key_Callback(hObject, eventdata, handles)
+
+
+% --- Executes during object creation, after setting all properties.
+function Key_CreateFcn(hObject, eventdata, handles)
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes on button press in pushbutton1.
+function pushbutton1_Callback(hObject, eventdata, handles)
+objBF = Blowfish();
+dataString = get(handles.InputText,'String');
+len = length(dataString);
+if mod(len,8) ~= 0
+    for i = len+1:len+8-mod(len,8)
+        dataString(i) = ' ';
+    end
+end
+keyString = get(handles.Key,'String');
+key = double(keyString);
+tic
+objBF = objBF.InitializeBlowfish(key,length(key));
+toc;
+dec32 = convertString(dataString,1);
+for i = 1:2:length(dec32)-1
+    [dec32(i),dec32(i+1)]= objBF.Blowfish_encipher(dec32(i),dec32(i+1));
+end
+ciphered = convertint32(dec32,1);
+set(handles.edit5,'String',ciphered);
+% --- Executes on button press in pushbutton2.
+function pushbutton2_Callback(~, ~, handles)
+objBF = Blowfish();
+dataString = get(handles.InputText,'String');
+keyString = get(handles.Key,'String');
+key = double(keyString);
+objBF = objBF.InitializeBlowfish(key,length(key));
+dec32 = convertString(dataString,2);
+for i = 1:2:length(dec32)-1
+    [dec32(i),dec32(i+1)]= objBF.Blowfish_decipher(dec32(i),dec32(i+1));
+end
+ciphered = convertint32(dec32,2);
+set(handles.edit5,'String',ciphered);
+
+function edit5_Callback(~, ~, ~)
+
+function edit5_CreateFcn(hObject, ~, ~)
+
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes during object creation, after setting all properties.
+function KeyTime_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to KeyTime (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+
+% --- Executes during object creation, after setting all properties.
+function EncipherTime_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to EncipherTime (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+
+% --- Executes during object creation, after setting all properties.
+function DecipherTime_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to DecipherTime (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
