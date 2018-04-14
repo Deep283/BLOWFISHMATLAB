@@ -112,8 +112,8 @@ KeyTime = toc;
 tic
 dataString = get(handles.InputText,'String');
 len = length(dataString);
-if mod(len,8) ~= 0
-    for i = len+1:len+8-mod(len,8)
+if mod(len,6) ~= 0
+    for i = len+1:len+6-mod(len,6)
         dataString(i) = ' ';
     end
 end
