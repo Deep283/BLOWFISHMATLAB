@@ -105,6 +105,8 @@ end
 function pushbutton1_Callback(hObject, eventdata, handles)
 objBF = Blowfish();
 tic
+%M=maxNumCompThreads(2);
+%disp(M);
 keyString = get(handles.Key,'String');
 key = double(keyString);
 objBF = objBF.InitializeBlowfish(key,length(key));
@@ -112,16 +114,17 @@ KeyTime = toc;
 tic
 dataString = get(handles.InputText,'String');
 len = length(dataString);
-if mod(len,6) ~= 0
-    for i = len+1:len+6-mod(len,6)
+ if mod(len,12) ~= 0
+    for i = len+1:len+12-mod(len,12)
         dataString(i) = ' ';
     end
 end
-dec32 = convertString(dataString,1);
-for i = 1:2:length(dec32)-1
-    [dec32(i),dec32(i+1)]= objBF.Blowfish_encipher(dec32(i),dec32(i+1));
+dec64 = convertString(dataString,1);
+parfor i = 1:length(dec64)
+    temp(i) = objBF.Blowfish_encipher(dec64(i));
 end
-ciphered = convertint32(dec32,1);
+dec64 = temp;
+ciphered = convertint32(dec64,1);
 encipherTime = toc;
 set(handles.edit5,'String',ciphered);
 set(handles.KeyTime,'String',KeyTime);
@@ -130,17 +133,20 @@ set(handles.EncipherTime,'String',encipherTime);
 function pushbutton2_Callback(~, ~, handles)
 objBF = Blowfish();
 tic
+%M=maxNumCompThreads(2);
+%disp(M);
 keyString = get(handles.Key,'String');
 key = double(keyString);
 objBF = objBF.InitializeBlowfish(key,length(key));
 KeyTime = toc;
 tic
 dataString = get(handles.InputText,'String');
-dec32 = convertString(dataString,2);
-for i = 1:2:length(dec32)-1
-    [dec32(i),dec32(i+1)]= objBF.Blowfish_decipher(dec32(i),dec32(i+1));
+dec64 = convertString(dataString,2);
+parfor i = 1:length(dec64)
+    temp(i) = objBF.Blowfish_decipher(dec64(i));
 end
-ciphered = convertint32(dec32,2);
+dec64 = temp;
+ciphered = convertint32(dec64,2);
 decipherTime = toc;
 set(handles.edit5,'String',ciphered);
 set(handles.KeyTime,'String',KeyTime);
